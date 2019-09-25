@@ -2,6 +2,9 @@
    This is code for 2*2*2 cube
    4 common anode pins are connected to Arduino pin 2,3,4,5 via resistors
    2 common cathode pins are connected to Arduino pin 1,12
+
+   By: Jasper Wang 
+   25/09/2019
 */
 
 void setup() {
