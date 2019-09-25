@@ -4,7 +4,7 @@
    2 common cathode pins are connected to Arduino pin 1,12
 
    By: Jasper Wang 
-   25/09/2019
+   24/09/2019
 */
 
 void setup() {
