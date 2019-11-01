@@ -17,12 +17,12 @@
 #define ledPin 0
 #define sensorPin 2
 
-int brightness = 0;
+int brightness = 0;                             // variables for the beath function
 int fadeAmount = 5;
 int fadeInterval = 20;
 unsigned long preTime = 0;
 
-bool ledStatus = false;
+bool ledStatus = false;                         // variables for the warn interval
 unsigned long lastTimeOn = 0;
 unsigned long lastTimeOff = 0;
 unsigned long onTime = 20000;
