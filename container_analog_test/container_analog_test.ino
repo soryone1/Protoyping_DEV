@@ -35,7 +35,7 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(sensorPin, INPUT);
   pinMode(potPin, INPUT);
-  pinMode(1, OUTPUT);
+  pinMode(1, OUTPUT);                             // debug led pin
 
 }
 
@@ -44,7 +44,7 @@ void setup() {
 void loop() {
   int sensorValue = analogRead(sensorPin);        // read the value from the sensor
   int threshold = analogRead(potPin);
-  float brightness = threshold / 4;
+  float brightness = threshold / 4;              // for debug only
   analogWrite(1,brightness);
 
   
