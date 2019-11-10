@@ -6,8 +6,8 @@
 #define tarPin A2
 
 float tem;
-float temTheshold = 31.00;
-float tarTem;
+float temTheshold = 25.00;
+long tarTem;
 float lastTarTem = 0;
 
 float addjustTime;
@@ -17,12 +17,14 @@ bool startCount = false;
 
 long sensorValue;
 
+unsigned long clockTime = 0;
+
 void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(temPin, INPUT);
   pinMode(tarPin, INPUT);
 
-  analogReference(INTERNAL);
+  //  analogReference(INTERNAL);
   OzOled.init();
   OzOled.clearDisplay();
   OzOled.setNormalDisplay();
@@ -34,18 +36,19 @@ void loop() {
   drawDegree();
   MainNum();
 
-  OzOled.printNumber(tem, 2, 0, 0);      // for debug only
+  OzOled.printNumber(tem, 1, 0, 0);      // for debug only.
 
-  sensorValue = analogRead(tarPin);
-//  tarTem = map(sensorValue, 0, 1023, 20, 30);
-  OzOled.printNumber(sensorValue, 2, 3);  // should be tarTem
-  analogWrite(ledPin, sensorValue / 4 );
+  sensorValue = analogRead(tarPin);              // read the value from the popotentiometer.
+  tarTem = map(sensorValue, 0, 1023, 15, 30);    // convert it between 15 and 30.
 
-  if (tarTem != lastTarTem && disappeared == true) {
+   
+
+
+  if ( disappeared == true) {
     addjustTime = millis();              // show adjust time here
     OzOled.setCursorXY(0, 3);
     OzOled.printString("T");
-    //    OzOled.printNumber(sensorValue, 2, 3);  // should be tarTem
+    OzOled.printNumber(tarTem, 2, 3);  // should be tarTem
     startCount = true;
   } else {
 
@@ -63,16 +66,16 @@ void loop() {
     }
   }
 
-  if (tem < temTheshold) {
+  if (tem < tarTem + 1) {
     startHeat();
-  } else {
+  } else  if (tem > tarTem - 1) {
     stopHeat();
   }
 }
 
 void getTem() {
   float voltage = analogRead(temPin) * 5.0 / 1024.0;
-  tem = (voltage - 0.5) * 10 ;
+  tem = (voltage - 0.5) * 100  ;
 }
 
 void MainNum() {
@@ -84,13 +87,13 @@ void MainNum() {
 void startHeat() {
   OzOled.setCursorXY(7, 3);     // draw "H" when heating mode enabled
   OzOled.printString("H");
-  //  digitalWrite(ledPin, HIGH);
+  digitalWrite(ledPin, HIGH);
 }
 
 void stopHeat() {
   OzOled.setCursorXY(7, 3);     // wipe "H" when heating mode disabled
   OzOled.printString(" ");
-  //  digitalWrite(ledPin, LOW);
+  digitalWrite(ledPin, LOW);
 }
 
 void drawDegree() {
