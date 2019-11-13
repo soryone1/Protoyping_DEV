@@ -10,24 +10,24 @@
  *  Put to sleep mode to save power, only wake up when the soil needs water
  *  
  *  BY: Jasper Wang
- *  TIME : 01/11/2019
+ *  TIME : 12/11/2019
  *  
  */
  
 #define ledPin 0
-#define sensorPin A1
-#define potPin A3
+#define sensorPin A3                  // set the soil sensor pin to A3 (PB3/2).
+#define potPin A2                     // Set the potentiometer pin to A2 (PB3 / 3).
 
-int brightness = 0;                             // variables for the beath function
+int brightness = 0;                             // variables for the Led beath function.
 int fadeAmount = 5;
-int fadeInterval = 20;
+int fadeInterval = 20;                         
 unsigned long preTime = 0;
 
-bool ledStatus = false;                         // variables for the warn interval
+bool ledStatus = false;                         // variables for the warn interval.
 unsigned long lastTimeOn = 0;
 unsigned long lastTimeOff = 0;
-unsigned long onTime = 20000;
-unsigned long offTime = 7000;
+unsigned long onTime = 20000;                   // change here to adjust the time for warning.
+unsigned long offTime = 7000;                   // change here to adjust the time not warning.
 
 /*************************** setup here ***************************/
 
@@ -35,42 +35,42 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(sensorPin, INPUT);
   pinMode(potPin, INPUT);
-  pinMode(1, OUTPUT);                             // debug led pin
+  pinMode(1, OUTPUT);                             // debug led pin !! delete it lastly.
 
 }
 
 /*************************** main loop here ***************************/
 
 void loop() {
-  int sensorValue = analogRead(sensorPin);        // read the value from the sensor
-  int threshold = analogRead(potPin);
-  float brightness = threshold / 4;              // for debug only
+  int sensorValue = analogRead(sensorPin);        // read the value from the soil sensor.
+  int threshold = analogRead(potPin);             // read the value from the potentiometer.
+  float brightness = threshold / 4;              // debug led pin !! delete it lastly.
   analogWrite(1,brightness);
 
   
-  if (sensorValue >= threshold) {                          // if the soil is dry under the threshold, enter warning mode
+  if (sensorValue >= threshold) {               // if the soil is dry under the threshold, enter warning mode.
 
     if (ledStatus == false) {
       if (millis() - lastTimeOff >= offTime) {
                 
-        lastTimeOn = millis();                     // mark the time when led was on, reverse the led status
+        lastTimeOn = millis();                     // mark the time when led was on, reverse the led status.
         ledStatus = true;
       }
     } else {
        
-       unsigned long timeOn = millis();             // grab the current time and start breathing the led
+       unsigned long timeOn = millis();             // grab the current time and start breathing the led.
        warning(timeOn);
        
       if (millis() - lastTimeOn >= onTime ) {
       
-        turnOff();                                  // turn the led off
+        turnOff();                                  // turn the led off.
 
-        lastTimeOff = millis();                     // grab the time when led was off and reverse the status
+        lastTimeOff = millis();                     // grab the time when led was off and reverse the status.
         ledStatus = false;
       }
     }
   } else {
-    turnOff();                                       // if the soil is wet, turn off the led
+    turnOff();                                       // if the soil suck enough water, turn off the led.
   }
 
 }
