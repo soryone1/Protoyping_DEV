@@ -15,9 +15,9 @@
 
   Last modified time : 20/11/2019
   by Jasper Wang
-  
- */
- 
+
+*/
+
 #include "TinyWireM.h"
 #include "TinyOzOLED.h"
 
@@ -42,6 +42,8 @@ unsigned long lastCheckTime = 0;
 unsigned long lastCheckTemTime = 0;
 int counter = 0;
 
+float aveTem;
+
 void setup() {
   pinMode(outputPin, OUTPUT);
   pinMode(temPin, INPUT);
@@ -57,12 +59,12 @@ void loop() {
   getTem();
   drawDegree();
   MainNum();
-  
+
   sensorValue = analogRead(tarPin);              // read the value from the popotentiometer.
   tarTem = map(sensorValue, 0, 1023, 15, 35);    // convert it between 15 and 30.
 
   //OzOled.printNumber(tem, 1, 0, 0);      // for debug only.
-  
+
   if (millis() - lastCheckTime >= 100) {
     float flucPo = abs(sensorValue - lastSensorValue);
     if (flucPo > 10) {
@@ -102,8 +104,22 @@ void loop() {
 }
 
 void getTem() {
-  float voltage = analogRead(temPin) * 5.0 / 1024.0;
-  tem = (voltage - 0.5) * 100;
+  
+  /* read 30 temperatures into an array, and get the average value of them */
+  float rawTem [30];
+  for (int i = 0; i < 30; i++) {
+    float voltage = analogRead(temPin) * 5.0 / 1024.0;
+    tem = (voltage - 0.5) * 100;
+    rawTem[i] = tem;
+  }
+
+  float sumTem = 0;
+  for (int i = 0; i < 30; i++) {
+    sumTem += rawTem[i];
+  }
+  
+  aveTem = sumTem / 30;
+  //OzOled.printNumber(aveTem, 1, 0, 0);      // for debug only.
 }
 
 void printText() {
@@ -115,25 +131,25 @@ void printText() {
 
 void MainNum() {
   char tmp[10];
-  dtostrf(tem, 2, 0, tmp);                // convert the number to string
-  OzOled.printBigNumber(tmp, 8, 0, 2);    // draw number
+  dtostrf(aveTem, 2, 0, tmp);                // convert the number to string
+  OzOled.printBigNumber(tmp, 8, 0, 2);       // draw number
 }
 
 void startHeat() {
-  OzOled.setCursorXY(7, 3);     // draw "H" when heating mode enabled
+  OzOled.setCursorXY(7, 3);            // draw "H" when heating mode enabled
   OzOled.printString("H");
   digitalWrite(outputPin, HIGH);
 }
 
 void stopHeat() {
-  OzOled.setCursorXY(7, 3);     // wipe "H" when heating mode disabled
+  OzOled.setCursorXY(7, 3);            // wipe "H" when heating mode disabled
   OzOled.printString(" ");
   digitalWrite(outputPin, LOW);
 }
 
 void drawDegree() {
-  OzOled.setCursorXY(15, 1);    // dram "o"
+  OzOled.setCursorXY(15, 1);           // dram "o"
   OzOled.printChar(67);
-  OzOled.setCursorXY(14, 0);    // draw "c"
+  OzOled.setCursorXY(14, 0);           // draw "c"
   OzOled.printChar(46);
 }
